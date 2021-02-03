@@ -19,7 +19,41 @@ def get_combination_in_list(*number_lists):
         combination_list.append(list(item))
     return combination_list
 
+# def list_to_string(*number_lists):
+#     str_list = []
+#     _str = ' '
+#     for element in list(number_lists):
+#         print(str(element))
+#         _str.join(str(element))
+#
+#     str_list.append(_str)
+#     return str_list
 
+def list_to_string(*number_lists):
+    number_lists = list(number_lists)
+    if len(number_lists) == 1:
+        return '[' + ','.join(number_lists[0]) + ']'
+    elif is_nested_list(number_lists):
+        for index, element in enumerate(number_lists):
+            _str = _str.join('[' + ','.join(number_lists[index]) + ']')
+    else:
+        str_list = []
+        for element in list(number_lists):
+            str_list = '[' + ','.join(element) + ']'
+            return str_list
+
+# [[1, 2], [3, 4]] => ["[1, 2]", "[3, 4]"]
+#_list = [['low', 'med'], ['3sec', ['1sec']]]
+_list = ['low','high']
+_str = '[' + ','.join(_list) + ']'
+print(_str)
+print(list_to_string(_list))
+print(list_to_string([['low', 'high'], ['3sec', '2sec']]))
+_list = [['low', 'high'], ['3sec', '2sec']]
+
+def is_nested_list(_list):
+    return any(isinstance(element, list) for element in _list)
+print(is_nested_list(_list))
 class Test_append_self_if_single_list(unittest.TestCase):
     def test_append_self_if_single_list_given_single_list_expect_duplicate_element_of_list(self):
         self.assertEqual([[1], [1]], append_self_if_single_list([1]))
