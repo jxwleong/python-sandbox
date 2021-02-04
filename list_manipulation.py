@@ -64,11 +64,12 @@ class Test_convert_nested_list_element_to_string(unittest.TestCase):
 
 def convert_list_to_string(_list):
     _str = ''
+    LAST_INDEX = len(_list) - 1
     for index, element in enumerate(_list):
         if index == 0:
             # If not the only the element don't join the ']', else join ']' to close the list str
             _str = ''.join([_str, '[' + str(element)]) if len(_list) != 1 else ''.join([_str, '[' + str(element) + ']'])
-        elif index == len(_list) - 1:
+        elif index == LAST_INDEX:
             _str = ''.join([_str, ',' + str(element) + ']'])
         else:
             _str = ''.join([_str, ',' + str(element)])
