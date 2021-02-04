@@ -42,29 +42,45 @@ class Test_is_nested_list(unittest.TestCase):
         self.assertEqual(True, is_nested_list([[1, 2], [3, 4]]))
         self.assertEqual(True, is_nested_list([[1, 2], [3, 4, 'a', '!'], ['AD']]))
 
-def list_to_string(*number_lists):
-    #number_lists = list(number_lists)
-    if is_nested_list(number_lists):
-        for index, element in enumerate(number_lists):
-            _str = ''
-            _str = _str.join('[' + ','.join(number_lists[index]) + ']')    
-    elif len(number_lists) == 1:
-        return '[' + ','.join(number_lists[0]) + ']'
 
-    else:
-        str_list = []
-        for element in list(number_lists):
-            str_list = '[' + ','.join(element) + ']'
-            return str_list
+def convert_nested_list_element_to_string(_list):
+    converted_list = []
+    if is_nested_list(_list):
+        for element_list in _list:
+            element_str = convert_list_to_string(element_list)
+            converted_list.append(element_str)
+        return converted_list
+    return False
 
-# [[1, 2], [3, 4]] => ["[1, 2]", "[3, 4]"]
-#_list = [['low', 'med'], ['3sec', ['1sec']]]
-_list = ['low','high']
-_str = '[' + ','.join(_list) + ']'
-print(_str)
-#print(list_to_string(_list))
-#print(list_to_string([['low', 'high'], ['3sec', '2sec']]))
-_list = [['low', 'high'], ['3sec', '2sec']]
+
+class Test_convert_nested_list_element_to_string(unittest.TestCase):
+    def test_convert_nested_list_element_to_string(self):
+        self.assertEqual(['[1,2]', '[3,4]'], convert_nested_list_element_to_string([[1, 2], [3, 4]]))
+        self.assertEqual(['[Hello,World]', '[Hi,There]'], convert_nested_list_element_to_string([['Hello', 'World'], ['Hi', 'There']]))
+        self.assertEqual(['[Hello,World]', '[Hi,There]', '[He,he]'], convert_nested_list_element_to_string([['Hello', 'World'], ['Hi', 'There'], ['He', 'he']]))
+        self.assertEqual(['[Low]', '[High,Low]'], convert_nested_list_element_to_string([['Low'], ['High', 'Low']]))
+        self.assertEqual(False, convert_nested_list_element_to_string(['low', 'high']))
+
+
+def convert_list_to_string(_list):
+    _str = ''
+    for index, element in enumerate(_list):
+        if index == 0:
+            # If not the only the element don't join the ']', else join ']' to close the list str
+            _str = ''.join([_str, '[' + str(element)]) if len(_list) != 1 else ''.join([_str, '[' + str(element) + ']'])
+        elif index == len(_list) - 1:
+            _str = ''.join([_str, ',' + str(element) + ']'])
+        else:
+            _str = ''.join([_str, ',' + str(element)])
+    return _str
+
+
+class Test_convert_list_to_string(unittest.TestCase):
+    def test_convert_list_to_string(self):
+        self.assertEqual('[1]', convert_list_to_string([1]))
+        self.assertEqual('[1,2]', convert_list_to_string([1, 2]))
+        self.assertEqual('[Hello,World]', convert_list_to_string(['Hello', 'World']))
+        self.assertEqual('[low,high]', convert_list_to_string(['low', 'high']))
 
 
 class Test_append_self_if_single_list(unittest.TestCase):
