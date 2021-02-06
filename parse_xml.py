@@ -24,9 +24,12 @@ tree = ET.parse('sample.xml')
 root = tree.getroot()
 ET.dump(tree)
 
-version = find_element(tree, 'Version')
+version = find_element(root, 'Version')
 update_element(version, '3.20.542.1')
-export_xml(tree, path=os.path.join(ROOT_DIR, "edited.xml"))
+ET.dump(tree)
+test_cfg = find_element(root, 'BSTATES')
+print(find_element(tree, './TEST_CFG/AutoCfg/BSTATES').text)
+# export_xml(tree, path=os.path.join(ROOT_DIR, "edited.xml"))
 
 
 def delete_file(path):

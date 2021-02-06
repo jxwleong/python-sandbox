@@ -2,4 +2,14 @@
 <WIND>
     <Version>3.21.530.1</Version>
     <LoopTracker>1</LoopTracker>
+    <TEST_CFG>
+        <AutoCfg>
+            <ASTATES>false</ASTATES>
+            <BSTATES>false</BSTATES>
+            <SOC>false</SOC>
+            <FACT>false</FACT>
+            <TestControl>false</TestControl>
+        </AutoCfg>
+    <TestTraceCfg/>
+    </TEST_CFG>
 </WIND>
