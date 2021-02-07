@@ -38,7 +38,8 @@ class ColorFormatter(logging.Formatter):
         message   = logging.Formatter.format(self, record)
         message   = message.replace("$RESET", RESET_SEQ)\
                            .replace("$BOLD",  BOLD_SEQ)\
-                           .replace("$COLOR", color)
+                           .replace("$COLOR", color)\
+                           .replace('$TIME_COLOR',  COLOR_SEQ % (30 + COLORS['MAGENTA']))
         for k, v in COLORS.items():
             message = message.replace("$" + k,    COLOR_SEQ % (v+30))\
                              .replace("$BG" + k,  COLOR_SEQ % (v+40))\
