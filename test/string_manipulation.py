@@ -1,9 +1,9 @@
 import unittest
 
-def remove_space(_str):
-    if isinstance(_str, str):
-        return _str.replace(' ', '')
-    raise TypeError("Invalid string argument _str: " + str(_str))
+def remove_space(str_):
+    if isinstance(str_, str):
+        return str_.replace(' ', '')
+    raise TypeError("Invalid string argument str_: " + str(str_))
 
 
 class Test_remove_space(unittest.TestCase):
