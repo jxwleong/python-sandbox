@@ -1,40 +1,19 @@
 import os
 import unittest
+import xml.etree.ElementTree 
 import itertools
 
 
-def append_self_if_single_list(list_):
-    # *numberlist_s is tuple, convert to list because
-    # tuple is immutable
-    list_ = list(list_)
-    if is_nested_list(list_) is False:
-        [list_.append(element) for element in list_]
-    return list_
-
-
-def get_combination_in_list(*list_): 
-    list_ = append_self_if_single_list(*list_)
-    combination_list = []
-    for item in list(itertools.product(*list_)):
-        combination_list.append(list(item))
-    return combination_list
-
-def list_to_string(*list_):
-    str_list = []
-    str_ = ' '
-    for element in list(list_):
-        print(str(element))
-        str_.join(str(element))
-
-    str_list.append(str_)
-    return str_list
+def convert_list_to_str(list):
+    str_ = ''.join(str(number) for number in list)
+    return str_
 
 def is_nested_list(list_):
     return any(isinstance(element, list) for element in list_)
 
 
 class Test_is_nested_list(unittest.TestCase):
-    def test_is_nested_list_given_not_nested_list_expect_false(self):
+    def test_is_nested_list_given_not_nestedlist__expect_false(self):
         self.assertEqual(False, is_nested_list([1, 2]))
         self.assertEqual(False, is_nested_list(['abc', '!@#$', '11aD']))
 
@@ -43,26 +22,142 @@ class Test_is_nested_list(unittest.TestCase):
         self.assertEqual(True, is_nested_list([[1, 2], [3, 4, 'a', '!'], ['AD']]))
 
 
-def convert_nested_list_element_to_string(list_):
+def duplicate_list_in_order(list_, n=2):
+    if is_nested_list(list_):
+        return list(itertools.chain.from_iterable(itertools.repeat(e, n) for e in list_))
+    return append_self_if_single_list(list_)
+
+
+def append_self_if_single_list(list_):
+    if is_nested_list(list_) is False:
+        temp_list = list_.copy()
+        list_= [list_] # Create a nested list for append
+        list_.append(temp_list)
+        return list_
+
+
+class Test_duplicate_list_in_order(unittest.TestCase):
+    def test_duplicate_list_in_order(self):
+        self.assertEqual([[1, 2], [1, 2]], duplicate_list_in_order([1, 2]))
+        self.assertEqual([['a', 'b'], ['a', 'b']], duplicate_list_in_order(['a', 'b']))
+        self.assertEqual([[1, 2], [1, 2], [3, 4], [3, 4]], duplicate_list_in_order([[1, 2], [3, 4]]))
+        self.assertEqual([['low', 'med'], ['low', 'med'], ['3sec', '4sec'], ['3sec', '4sec']], \
+                          duplicate_list_in_order([['low', 'med'], ['3sec', '4sec']]))
+
+
+def setup_list_for_combination(number_lists, include_self):
+    if include_self is True:
+        number_lists = duplicate_list_in_order(number_lists)
+    return number_lists
+
+
+class Test_setup_list_for_combination(unittest.TestCase):
+    def test_setup_list_for_combination_include_self_True(self):
+        self.assertEqual([['a', 'b'], ['a', 'b'],['c', 'd'],['c', 'd']], \
+            setup_list_for_combination([['a', 'b'], ['c', 'd']], include_self=True))
+    
+    def test_setup_list_for_combination_include_self_False(self):
+        self.assertEqual([['a', 'b'], ['c', 'd']], setup_list_for_combination([['a', 'b'], ['c', 'd']],\
+                                                                              include_self=False))
+
+
+def get_combination_in_list(number_lists, include_self=True): 
+    number_lists = list(number_lists)
+    number_lists = setup_list_for_combination(number_lists, include_self=include_self)
+    combination_list = []
+    for item in list(itertools.product(*number_lists)):
+        combination_list.append(list(item))
+    return combination_list
+
+
+class Test_get_combination_in_list(unittest.TestCase):
+    def test_get_combination_in_list_given_single_list_expect_get_all_the_possible_combination(self):
+        self.assertEqual([[1, 1], [1, 2], [2, 1], [2, 2]], get_combination_in_list([1, 2]))
+        self.assertEqual([['low', 'low'], ['low', 'med'], ['med', 'low'], ['med', 'med']],    \
+                        get_combination_in_list(['low', 'med']))
+        self.assertEqual([[1, 1], [1, 2], [1, 3],   \
+                          [2, 1], [2, 2], [2, 3],   \
+                          [3, 1], [3, 2], [3, 3]], get_combination_in_list([1, 2, 3]))   
+    
+    def test_get_combination_in_list_given_double_list_expect_get_all_the_possible_combination(self):
+        self.assertEqual([['Low', 'Low'], ['Low', 'Med'], ['Med', 'Low'], ['Med', 'Med']],    \
+                        get_combination_in_list(['Low', 'Med']))
+        self.assertEqual([['3sec', '3sec', 'Low', 'Low'], ['3sec', '3sec', 'Low', 'Med'], ['3sec', '3sec', 'Med', 'Low'], ['3sec', '3sec', 'Med', 'Med'],  \
+                          ['3sec', '1sec', 'Low', 'Low'], ['3sec', '1sec', 'Low', 'Med'], ['3sec', '1sec', 'Med', 'Low'], ['3sec', '1sec', 'Med', 'Med'], \
+                          ['1sec', '3sec', 'Low', 'Low'], ['1sec', '3sec', 'Low', 'Med'], ['1sec', '3sec', 'Med', 'Low'], ['1sec', '3sec', 'Med', 'Med'], \
+                          ['1sec', '1sec', 'Low', 'Low'], ['1sec', '1sec', 'Low', 'Med'], ['1sec', '1sec', 'Med', 'Low'], ['1sec', '1sec', 'Med', 'Med']], \
+                          get_combination_in_list([['3sec', '1sec'], ['Low', 'Med']]))
+    
+    def test_get_combination_in_list_given_double_list_not_include_self_expect_get_all_the_possible_combination(self):    
+        self.assertEqual([['Low', 'Pn'], ['Low', 'P0'], ['Med', 'Pn'], ['Med', 'P0']],  \
+                        get_combination_in_list([['Low', 'Med'],['Pn','P0']], include_self=False))
+
+
+def convert_args_list_to_nested_list(*args_list):
+    args_list = list(args_list)
+    nested_list = []
+
+    for list_ in args_list:
+        if is_nested_list(list_):
+            for element_list in list_:
+                nested_list.append(element_list)
+        else:        
+            nested_list.append(list_)
+    return nested_list
+
+class Test_convert_args_list_to_nested_list(unittest.TestCase):
+    def test_convert_args_list_to_nested_list_given_n_args_list_expect_convert_to_nested_list(self):
+        self.assertEqual([[1, 2], [3, 4]], convert_args_list_to_nested_list([1, 2], [3, 4]))
+        self.assertEqual([['Low', 'Med'], ['3sec'], ['Hi']], 
+                         convert_args_list_to_nested_list(['Low', 'Med'], ['3sec'], ['Hi']))
+
+    def test_convert_args_list_to_nested_list_given_n_args_list_with_nested_list_expect_convert_to_nested_list(self):
+        self.assertEqual([[1, 2], [3, 4], ['a', 'b']], \
+                        convert_args_list_to_nested_list([[1, 2], [3, 4]], ['a', 'b']))
+        self.assertEqual([['Low', 'Med'], ['3sec'], ['Hi']], 
+                         convert_args_list_to_nested_list(['Low', 'Med'], [['3sec'], ['Hi']]))
+        self.assertEqual([['Low', 'Med'], ['Hehe'], ['X'], ['NANI'], ['Haha']], 
+                         convert_args_list_to_nested_list(['Low', 'Med'], [['Hehe'], ['X']], [['NANI'], ['Haha']]))
+
+
+def get_xml_combination_list(list):
+    RATIO_PARAMETER_1 = 2
+    RATIO_PARAMETER_2 = 3
+    SWITCH_TIME_1 = 0
+    SWITCH_TIME_2 = 1
+    new_list = []
+    for list_element in list:
+        new_list.append(list_element[RATIO_PARAMETER_1]+ '|' + list_element[SWITCH_TIME_1])
+        new_list.append(list_element[RATIO_PARAMETER_2]+ '|' + list_element[SWITCH_TIME_2])
+    return new_list
+
+
+class Test_get_xml_combination_list(unittest.TestCase):
+    def test_get_xml_combination_list(self):
+        self.assertEqual(['low|3sec', 'low|3sec', 'low|3sec', 'low|3sec'], \
+                          get_xml_combination_list([['3sec','3sec','low','low'], ['3sec','3sec','low','low']]))     
+
+
+def convert_nested_list_element_to_str(list_):
     converted_list = []
     if is_nested_list(list_):
-        for list_element in list_:
-            element_str = convert_list_to_string(list_element)
+        for element_list in list_:
+            element_str = convert_list_to_str(element_list)
             converted_list.append(element_str)
         return converted_list
     return False
 
 
-class Test_convert_nested_list_element_to_string(unittest.TestCase):
-    def test_convert_nested_list_element_to_string(self):
-        self.assertEqual(['[1,2]', '[3,4]'], convert_nested_list_element_to_string([[1, 2], [3, 4]]))
-        self.assertEqual(['[Hello,World]', '[Hi,There]'], convert_nested_list_element_to_string([['Hello', 'World'], ['Hi', 'There']]))
-        self.assertEqual(['[Hello,World]', '[Hi,There]', '[He,he]'], convert_nested_list_element_to_string([['Hello', 'World'], ['Hi', 'There'], ['He', 'he']]))
-        self.assertEqual(['[Low]', '[High,Low]'], convert_nested_list_element_to_string([['Low'], ['High', 'Low']]))
-        self.assertEqual(False, convert_nested_list_element_to_string(['low', 'high']))
+class Test_convert_nested_list_element_to_str(unittest.TestCase):
+    def test_convert_nested_list_element_to_str(self):
+        self.assertEqual(['[1,2]', '[3,4]'], convert_nested_list_element_to_str([[1, 2], [3, 4]]))
+        self.assertEqual(['[Hello,World]', '[Hi,There]'], convert_nested_list_element_to_str([['Hello', 'World'], ['Hi', 'There']]))
+        self.assertEqual(['[Hello,World]', '[Hi,There]', '[He,he]'], convert_nested_list_element_to_str([['Hello', 'World'], ['Hi', 'There'], ['He', 'he']]))
+        self.assertEqual(['[Low]', '[High,Low]'], convert_nested_list_element_to_str([['Low'], ['High', 'Low']]))
+        self.assertEqual(False, convert_nested_list_element_to_str(['low', 'high']))
 
 
-def convert_list_to_string(list_):
+def convert_list_to_str(list_):
     str_ = ''
     LAST_INDEX = len(list_) - 1
     for index, element in enumerate(list_):
@@ -76,55 +171,14 @@ def convert_list_to_string(list_):
     return str_
 
 
-class Test_convert_list_to_string(unittest.TestCase):
-    def test_convert_list_to_string(self):
-        self.assertEqual('[1]', convert_list_to_string([1]))
-        self.assertEqual('[1,2]', convert_list_to_string([1, 2]))
-        self.assertEqual('[Hello,World]', convert_list_to_string(['Hello', 'World']))
-        self.assertEqual('[low,high]', convert_list_to_string(['low', 'high']))
-
-
-# class Test_append_self_if_single_list(unittest.TestCase):
-#     def test_append_self_if_single_list_given_single_list_expect_duplicate_element_of_list(self):
-#         self.assertEqual([1, 1], append_self_if_single_list([1]))
-#         self.assertEqual([[1, 2], [1, 2]], append_self_if_single_list([1, 2]))
-#         self.assertEqual([1, 2, 3, 4, 5], [1, 2, 3, 4, 5], append_self_if_single_list([1, 2, 3, 4, 5]))
-#         self.assertEqual(['abcd'], ['abcd'], append_self_if_single_list(['abcd']))
-#         self.assertEqual(['aaa', 'sss', 'ddd', 1], ['aaa', 'sss', 'ddd', 1], append_self_if_single_list(['aaa', 'sss', 'ddd', 1]))
-
-#     def test_append_self_if_single_list_given_non_single_list_expect_no_effect(self):
-#         self.assertEqual([[1], [2]], append_self_if_single_list([[1], [2]]))
-#         self.assertEqual([[1, 2], [3, 4]], append_self_if_single_list([[1, 2], [3, 4]]))
-#         self.assertEqual([[1, 2, 3, 4, 5], ['a', 'b']], append_self_if_single_list([[1, 2, 3, 4, 5], ['a', 'b']]))
-#         self.assertEqual([['abcd'], ['!@#$']], append_self_if_single_list([['abcd'], ['!@#$']]))
-#         self.assertEqual([['aaa', 'sss'], [2, 3], [1]], append_self_if_single_list([['aaa', 'sss'], [2, 3], [1]]))
-
-
-class Test_get_combination_in_list(unittest.TestCase):
-    def test_get_combination_in_list_given_singlelist_expect_get_all_the_possible_combination(self):
-        self.assertEqual([[1, 1], [1, 2], [2, 1], [2, 2]], get_combination_in_list([1, 2]))
-        self.assertEqual([[1, 1], [1, 2], [1, 3],   \
-                          [2, 1], [2, 2], [2, 3],   \
-                          [3, 1], [3, 2], [3, 3]], get_combination_in_list([1, 2, 3]))
-
-#     def test_get_combination_in_list_given_twolist_expect_get_all_the_possible_combination(self):
-#         self.assertEqual([[1, 3], [1, 4], [2, 3], [2, 4]], get_combination_in_list([1, 2], [3, 4]))
-#         self.assertEqual([[1, 4], [1, 5], [1, 6],   \
-#                           [2, 4], [2, 5], [2, 6],   \
-#                           [3, 4], [3, 5], [3, 6]], get_combination_in_list([1, 2, 3], [4, 5, 6]))
-
-#     def test_get_combination_in_list_given_threelist__expect_get_all_the_possible_combination(self):
-#         self.assertEqual([[1, 3, 5], [1, 3, 6], [1, 4, 5], [1, 4, 6],   \
-#                           [2, 3, 5], [2, 3, 6], [2, 4, 5], [2, 4, 6]], get_combination_in_list([1, 2], [3, 4], [5, 6]))
-
-#     def test_get_combination_in_list_given_fourlist__expect_get_all_the_possible_combination(self):
-#         self.assertEqual([[1, 3, 5, 7], [1, 3, 5, 8], [1, 3, 6, 7], [1, 3, 6, 8],    \
-#                           [1, 4, 5, 7], [1, 4, 5, 8], [1, 4, 6, 7], [1, 4, 6, 8],    \
-#                           [2, 3, 5, 7], [2, 3, 5, 8], [2, 3, 6, 7], [2, 3, 6, 8],    \
-#                           [2, 4, 5, 7], [2, 4, 5, 8], [2, 4, 6, 7], [2, 4, 6, 8]], get_combination_in_list([1, 2], [3, 4], [5, 6], [7, 8]))
+class Test_convert_list_to_str(unittest.TestCase):
+    def test_convert_list_to_str(self):
+        self.assertEqual('[1]', convert_list_to_str([1]))
+        self.assertEqual('[1,2]', convert_list_to_str([1, 2]))
+        self.assertEqual('[Hello,World]', convert_list_to_str(['Hello', 'World']))
+        self.assertEqual('[low,high]', convert_list_to_str(['low', 'high']))
+        self.assertEqual('[1,2,3,4]', convert_list_to_str([1, 2, 3, 4]))   
 
 
 if __name__ == '__main__':
     unittest.main()
-
-
