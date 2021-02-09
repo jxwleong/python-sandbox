@@ -89,8 +89,8 @@ class Test_get_combination_in_list(unittest.TestCase):
                           get_combination_in_list([['3sec', '1sec'], ['Low', 'Med']]))
     
     def test_get_combination_in_list_given_double_list_not_include_self_expect_get_all_the_possible_combination(self):    
-        self.assertEqual([['Low', 'Pn'], ['Low', 'P0'], ['Med', 'Pn'], ['Med', 'P0']],  \
-                        get_combination_in_list([['Low', 'Med'],['Pn','P0']], include_self=False))
+        self.assertEqual([['Low', '1'], ['Low', '2'], ['Med', '1'], ['Med', '2']],  \
+                        get_combination_in_list([['Low', 'Med'],['1','2']], include_self=False))
 
 
 def convert_args_list_to_nested_list(*args_list):
@@ -119,23 +119,6 @@ class Test_convert_args_list_to_nested_list(unittest.TestCase):
         self.assertEqual([['Low', 'Med'], ['Hehe'], ['X'], ['NANI'], ['Haha']], 
                          convert_args_list_to_nested_list(['Low', 'Med'], [['Hehe'], ['X']], [['NANI'], ['Haha']]))
 
-
-def get_xml_combination_list(list):
-    RATIO_PARAMETER_1 = 2
-    RATIO_PARAMETER_2 = 3
-    SWITCH_TIME_1 = 0
-    SWITCH_TIME_2 = 1
-    new_list = []
-    for list_element in list:
-        new_list.append(list_element[RATIO_PARAMETER_1]+ '|' + list_element[SWITCH_TIME_1])
-        new_list.append(list_element[RATIO_PARAMETER_2]+ '|' + list_element[SWITCH_TIME_2])
-    return new_list
-
-
-class Test_get_xml_combination_list(unittest.TestCase):
-    def test_get_xml_combination_list(self):
-        self.assertEqual(['low|3sec', 'low|3sec', 'low|3sec', 'low|3sec'], \
-                          get_xml_combination_list([['3sec','3sec','low','low'], ['3sec','3sec','low','low']]))     
 
 
 def convert_nested_list_element_to_str(list_):
@@ -179,6 +162,23 @@ class Test_convert_list_to_str(unittest.TestCase):
         self.assertEqual('[low,high]', convert_list_to_str(['low', 'high']))
         self.assertEqual('[1,2,3,4]', convert_list_to_str([1, 2, 3, 4]))   
 
+
+def duplicate_list(list_, n=1):
+    if isinstance(list_, list) is False:
+        raise TypeError("Expecting list but receiving {}".format(type(list_)))
+    
+    nested_list = [list_]
+    while n != 0:
+        nested_list.append(list_)
+        n -= 1
+    return nested_list
+
+class Test_duplicate_list(unittest.TestCase):
+    def test_duplicate_list(self):
+        self.assertEqual([[1], [1]], duplicate_list([1]))
+        self.assertEqual([[1, 2], [1, 2]], duplicate_list([1, 2]))
+        self.assertEqual([[1, 2], [1, 2], [1, 2]], duplicate_list([1, 2], 2))
+        self.assertEqual([[1, 2], [1, 2], [1, 2], [1, 2]], duplicate_list([1, 2], 3))
 
 if __name__ == '__main__':
     unittest.main()
