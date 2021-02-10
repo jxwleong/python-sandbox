@@ -20,7 +20,7 @@ def update_element(element, value):
 
 print("Root DIR")
 print(ROOT_DIR)
-tree = ET.parse('sample.xml')
+tree = ET.parse('xml/sample.xml')
 root = tree.getroot()
 ET.dump(tree)
 
@@ -28,10 +28,13 @@ version = find_element(root, 'Version')
 update_element(version, '3.20.542.1')
 ET.dump(tree)
 test_cfg = find_element(root, 'BSTATES')
-print(find_element(tree, './TEST_CFG/AutoCfg/BSTATES').text)
+#print(find_element(tree, './TEST_CFG/AutoCfg/BSTATES').text)
 # export_xml(tree, path=os.path.join(ROOT_DIR, "edited.xml"))
 
+def get_xpath(element_path):
+    return './' + element_path
 
+print(get_xpath('Version'))
 def delete_file(path):
     if os.path.exists(path):
         os.remove(path)
