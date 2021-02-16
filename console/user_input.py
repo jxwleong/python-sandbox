@@ -2,7 +2,7 @@ from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
 
 
-def user_input(message, debug_mode, completer=None):
+def user_input(message, debug_mode=False, completer=None):
     if debug_mode:
         return input(message)
     else:
@@ -12,6 +12,6 @@ completer = WordCompleter(['Hello', 'World'])
 text = user_input('Hello Debug: ', debug_mode=True)
 print('You said: %s Debug Mode' % text)
 
-text = user_input('Hello Prod: ', debug_mode=False, completer=completer)
+text = user_input('Hello Prod: ', completer=completer)
 print('You said: %s Debug Prod' % text)
 
