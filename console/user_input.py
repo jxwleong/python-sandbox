@@ -20,10 +20,14 @@ completer = WordCompleter(['Hello', 'World'])
 
 class test_user_input(unittest.TestCase):
     @patch('builtins.input', return_value='Hello')
-    def test_user_input_with_mock_patch(self, input):
+    def test_user_input_with_mock_patch_single_mocked_value(self, input):
         self.assertEqual('Hello', user_input('Hello Debug: ', debug_mode=True))
         self.assertRaises(TypeError, 'Hello', user_input, 'Hello Debug: ', debug_mode=False, completer=completer)
 
+    @patch('builtins.input', side_effect=['Hello', 'World'])
+    def test_user_input_with_mock_patch_multiple_mocked_value(self, mock_input):
+        self.assertEqual('Hello', user_input('Hello Debug: ', debug_mode=True))
+        self.assertEqual('World', user_input('Hello Debug: ', debug_mode=True))
 
 if __name__ == '__main__':
     unittest.main()
