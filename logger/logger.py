@@ -50,4 +50,3 @@ DEFAULT_LOGGING = {
 
 
 logging.config.dictConfig(DEFAULT_LOGGING)
-logging.warning('WARNING!!!')
