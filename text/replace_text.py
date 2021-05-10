@@ -43,9 +43,25 @@ def read_file(file):
     with open(file, "r") as file:
         return file.read()
 
+
 logger = logger_init()
-logger.info("Test")
+
+
+pattern = "RECIPE_DICT\[\"Ingredient.B\"\]\s*=\s*\"\w*\""
+#pattern = "/s/s/s/s/"
+
 try:
-    logger.info(read_file(recipe_path))
+    file_data = read_file(recipe_path)
+    logger.info("BEFORE:")
+    logger.info(file_data)
+    logger.info("AFTER:")
+
+    match = re.search(pattern, file_data)
+    if match is not None:
+        logger.info(f"Match found! {match}")
+        result = re.sub(pattern, "RECIPE_DICT[\"Ingredient.B\"] = \"Juice\"", file_data)
+        logger.info(result)
+    else:
+        logger.warning(f"Match not found")
 except:
     logger.exception("Exception received!")
