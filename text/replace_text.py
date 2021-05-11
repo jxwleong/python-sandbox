@@ -43,7 +43,19 @@ def read_file(file):
     with open(file, "r") as file:
         return file.read()
 
-def replace_text(file, pattern, replacement):
+def write_file(file, data):
+    """
+    Write file with data, will overwrite old data!
+    
+    Args:
+        file (str): Path to the file to be edited
+        data (str): Data to be written to file
+    """
+    with open(file, "w") as file:
+            file.write(data)
+
+
+def replace_text(file, pattern, replacement, overwrite=False):
     """
     Replace the file content using re.sub
 
@@ -51,17 +63,23 @@ def replace_text(file, pattern, replacement):
         file (str): Path to the file to be edited
         pattern (str): Regex to search in file
         replacement (str): Replacement string for the "regexed" text in file
+        overwrite (boolean): Overwrite the content of the file if set to True
 
     Returns:
-        str: String of the updated file
+        str: 
+        if overwrite = True: Path of the file overwritten
+        if overwrite = False: String of the updated file
     """
     file_data = read_file(file)
-
     match = re.search(pattern, file_data)
 
     if match is not None:
         result = re.sub(pattern, replacement, file_data)
-        return result
+        if overwrite == False:  
+            return result
+        else:
+            write_file(file, data=result)   
+            return file
     raise Exception(f"Cant find {pattern} in {file}")
 
 logger = logger_init()
