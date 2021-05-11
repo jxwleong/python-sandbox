@@ -38,11 +38,31 @@ def read_file(file):
         file (str): Path to the file to be read
 
     Returns:
-        str: string read from file
+        str: String read from file
     """
     with open(file, "r") as file:
         return file.read()
 
+def replace_text(file, pattern, replacement):
+    """
+    Replace the file content using re.sub
+
+    Args:
+        file (str): Path to the file to be edited
+        pattern (str): Regex to search in file
+        replacement (str): Replacement string for the "regexed" text in file
+
+    Returns:
+        str: String of the updated file
+    """
+    file_data = read_file(file)
+
+    match = re.search(pattern, file_data)
+
+    if match is not None:
+        result = re.sub(pattern, replacement, file_data)
+        return result
+    raise Exception(f"Cant find {pattern} in {file}")
 
 logger = logger_init()
 
@@ -56,12 +76,7 @@ try:
     logger.info(file_data)
     logger.info("AFTER:")
 
-    match = re.search(pattern, file_data)
-    if match is not None:
-        logger.info(f"Match found! {match}")
-        result = re.sub(pattern, "RECIPE_DICT[\"Ingredient.B\"] = \"Juice\"", file_data)
-        logger.info(result)
-    else:
-        logger.warning(f"Match not found")
+    new_string = replace_text(recipe_path, pattern, "HAHAHA")
+    logger.info(f"New: {new_string}")
 except:
     logger.exception("Exception received!")
