@@ -1,6 +1,7 @@
 __author__ = "Jason Leong Xie Wei"
 __email__ = "jason.xie.wei.leong@gmail.com"
 
+import argparse
 import re
 import os
 import sys
@@ -10,6 +11,21 @@ import logging
 dir_path = os.path.dirname(os.path.realpath(__file__))
 recipe_path = os.path.join(dir_path, "recipe.py")
 log_path = os.path.join(dir_path, "debug.log")
+
+
+def arg_init():
+    """
+    Initialize argparse
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-a', '--a_val', 
+                       help=f"Value for recipe a", 
+                       type=int)
+    parser.add_argument('-b', '--b_val', 
+                       help=f"Value for recipe b", 
+                       type=int)                  
+    args = parser.parse_args()
+    return args
 
 def logger_init():
     """
@@ -75,7 +91,7 @@ def replace_text(file, pattern, replacement, overwrite=False):
 
     if match is not None:
         result = re.sub(pattern, replacement, file_data)
-        if overwrite == False:  
+        if overwrite == False:
             return result
         else:
             write_file(file, data=result)   
@@ -83,6 +99,7 @@ def replace_text(file, pattern, replacement, overwrite=False):
     raise Exception(f"Cant find {pattern} in {file}")
 
 logger = logger_init()
+parser = arg_init()
 
 
 pattern = "RECIPE_DICT\[\"Ingredient.B\"\]\s*=\s*\"\w*\""
