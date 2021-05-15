@@ -11,12 +11,15 @@ from collections import OrderedDict
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 recipe_path = os.path.join(dir_path, "recipe.py")
+with open("debug.log", "w"):  pass
 log_path = os.path.join(dir_path, "debug.log")
 
-arg_values = {
-    "RECIPE_DICT[\"Ingredient.A\"]": 0,
-    "RECIPE_DICT[\"Ingredient.B\"]": 0
+arg_dict = {
+    "RECIPE_DICT\[\"Ingredient.A\"\]": 0,
+    "RECIPE_DICT\[\"Ingredient.B\"\]": 0
     }
+
+POSIX_PATTERN  = "\s*=\s*\"?\w*\"?"
 
 
 def arg_init():
@@ -34,37 +37,19 @@ def arg_init():
     return args
 
 
-
 def process_arg(args):
     """
     Process the arguments(args) after calling arg_init()
     """
-    global arg_values
+    global arg_dict
 
     args_dict = args.__dict__
     for index, (key, value) in enumerate(args_dict.items()):
         if value is not None:
-            arg_key = list(arg_values.keys())
-            arg_value = list(arg_values.values()) 
+            arg_key = list(arg_dict.keys())
+            arg_value = list(arg_dict.values()) 
             arg_value[index] = value
-            arg_values = dict(zip(arg_key, arg_value))
-
-# Not sure if this is still necessary?
-def get_replacement_text(str_, value):
-    """
-
-    Args:
-        str_ (str): String to be concatenate with value
-        value (str): Will be concatenate with str_
-
-    Example:
-        str_: RECIPE_DICT["Ingredient.B"]
-        value: "Water"
-        
-        return:
-        RECIPE_DICT["Ingredient.B"] = "Water"
-    """
-    return "".join([str_, value])
+            arg_dict = dict(zip(arg_key, arg_value))
 
 
 def logger_init():
@@ -98,6 +83,7 @@ def read_file(file):
     """
     with open(file, "r") as file:
         return file.read()
+        
 
 def write_file(file, data):
     """
@@ -130,21 +116,20 @@ def replace_text(file, pattern, replacement, overwrite=False):
     match = re.search(pattern, file_data)
 
     if match is not None:
-        result = re.sub(pattern, replacement, file_data)
+        result = re.sub(pattern,  replacement.replace("\\", ""), file_data)
         if overwrite == False:
             return result
         else:
-            write_file(file, data=result)   
+            write_file(file, data=result)
             return file
     raise Exception(f"Cant find {pattern} in {file}")
 
+
 logger = logger_init()
 args = arg_init()
-logger.info(f"Before process: {arg_values}")
+logger.info(f"Before process: {arg_dict}")
 process_arg(args)
-logger.info(f"After process: {arg_values}")
-pattern = "RECIPE_DICT\[\"Ingredient.B\"\]\s*=\s*\"\w*\""
-#pattern = "/s/s/s/s/"
+logger.info(f"After process: {arg_dict}")
 
 try:
     file_data = read_file(recipe_path)
@@ -152,7 +137,10 @@ try:
     logger.info(file_data)
     logger.info("AFTER:")
 
-    new_string = replace_text(recipe_path, pattern, "HAHAHA")
-    logger.info(f"New: {new_string}")
+    for pattern_key, value in arg_dict.items():
+        pattern = "".join([pattern_key, POSIX_PATTERN])
+        replacement = "".join([pattern_key, " = ", str(value)])
+        replace_text(recipe_path, pattern, replacement, overwrite=True)
+    logger.info(f"New: {read_file(recipe_path)}")
 except:
     logger.exception("Exception received!")
