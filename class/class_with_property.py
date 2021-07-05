@@ -4,7 +4,9 @@ cliché employee class :P
 class Employee:
     def __init__(self, name, age):
         self.name = name
-        self.age = age
+        # _age to prevent circular call
+        # https://stackoverflow.com/questions/51341576/variables-starting-with-underscore-for-property-decorator
+        self._age = age
 
     @property
     def age(self):
