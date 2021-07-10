@@ -144,10 +144,11 @@ def func2str(func, *args, **kwargs):
 def function_wrapper(func):
     def wrapper(*args, **kwargs):
         function_str = func2str(func, *args, **kwargs)
+        print(f"{function_str} called.")
         start = time.time()
         result = func(*args, **kwargs)
         end = time.time()
-        print('{0} is executed in {1} seconds and return {2}<{3}>'.format(function_str, end-start, type(result), result))
+        print('{0} return {1}<{2}>'.format(function_str, type(result), result))
         return result
     return wrapper
 
@@ -173,8 +174,11 @@ hreet(1)
 hreet(key=1, a=2)
 hreet("aaa", key=1, a=2)
 
+@function_wrapper
+def temp():
+    print("HAHA")
 
-
+temp()
 def foo(bar="foo", foo=10, *args, **kwargs):
     pass
 
