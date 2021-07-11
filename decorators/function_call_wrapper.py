@@ -1,5 +1,6 @@
 import time
 import inspect
+import logging
 
 import unittest
 
@@ -141,14 +142,16 @@ def func2str(func, *args, **kwargs):
         str_ += dict2str(kwargs)
     return f"{func.__name__}({str_})"
 
-def function_wrapper(func):
+def function_wrapper(func, logger: logging.Logger=None):
+    if logger is None:  log = print
+    else:   log = logger.info
     def wrapper(*args, **kwargs):
         function_str = func2str(func, *args, **kwargs)
-        print(f"{function_str} called.")
+        log(f"{function_str} called.")
         start = time.time()
         result = func(*args, **kwargs)
         end = time.time()
-        print('{0} return {1}<{2}>'.format(function_str, type(result), result))
+        log('{0} return {1}<{2}>'.format(function_str, type(result), result))
         return result
     return wrapper
 
