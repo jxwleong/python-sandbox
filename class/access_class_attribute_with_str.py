@@ -50,7 +50,7 @@ def get_attr(dotted_path):
         class_name, attribute = dotted_path.split('.', 1)
         return getattr(globals()[class_name], attribute)
     except:
-        class_name = dotted_path
+        raise Exception(f"Received invalid dotted path '{dotted_path}'")
 
     obj_type = type(dotted_path)
     print(dotted_path)
@@ -62,11 +62,15 @@ def set_attr(dotted_path, value):
         class_name, attribute = dotted_path.split('.', 1)
         return setattr(globals()[class_name], attribute, value)
     except:
-        class_name = dotted_path
+        raise Exception(f"Received invalid dotted path '{dotted_path}'")
 
 print(get_attr("Ali.age"))
 print(set_attr("Ali.age", 1))
 print(get_attr("Ali.age"))
+print(get_attr("Ali.name"))
+print(set_attr("Ali.name", "Abu"))
+print(get_attr("Ali.name"))
+get_attr("Abu.name")
 # t = type(Ali)
 # temp = t("temp", 2)
 # print(temp.age)
