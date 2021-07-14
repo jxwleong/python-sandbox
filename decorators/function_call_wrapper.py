@@ -4,7 +4,7 @@ import logging
 
 import unittest
 
-def dict2str(dict_ :dict, remove_trailing_comma=True) ->str:
+def dict2str(dict_ :dict, remove_trailing_comma=True, exception=True) ->str:
     """
     Returns the dictionary's key value pair in the format
     "key=value, ..."
@@ -12,7 +12,8 @@ def dict2str(dict_ :dict, remove_trailing_comma=True) ->str:
     Ex.
     dict_ = {a=123, b="lol"}
     str_ = "a=123, b='lol'"
-    
+    exception (bool): Set True will raise exception if dict len is 0\
+
     Arguments:
         dict_ (dict): Dictionary where the key and value pair
                       will be converted into string.
@@ -22,6 +23,7 @@ def dict2str(dict_ :dict, remove_trailing_comma=True) ->str:
     """
     str_ = ""
     if len(dict_) == 0:
+        if exception is False:  return ""
         raise ValueError(f"Length of dict_ (dict_) is 0.")
     for key, value in dict_.items():
         str_ += f"{key}="
@@ -41,7 +43,7 @@ class Test_dict2str(unittest.TestCase):
         self.assertRaises(ValueError, dict2str, {})
 
 
-def tuple_element_to_str(tuple_ :tuple, remove_trailing_comma=True) -> str:
+def tuple_element_to_str(tuple_ :tuple, remove_trailing_comma=True, exception=True) -> str:
     """
     Returns the dictionary's key value pair in the format
     "key=value, ..."
@@ -54,12 +56,13 @@ def tuple_element_to_str(tuple_ :tuple, remove_trailing_comma=True) -> str:
         tuple_ (tuple): Tuple where the element
                         will be converted into string.
         remove_trailing_comma (bool): Removed the trailing ", " of the str_
-
+        exception (bool): Set True will raise exception if tuple len is 0
     Returns:
         str_ (str): String of the 'element, ...' pair of tuple_
     """
     str_ = ""
     if len(tuple_) == 0:
+        if exception is False:  return ""
         raise ValueError(f"Length of dict_ (dict_) is 0.")
     for element in tuple_:
         if isinstance(element, str) is True:  str_ += f"'{element}', "
@@ -164,32 +167,55 @@ def greet(name="Haha", *args, **kwargs):
     print('Hello {0}'.format(name))
     return 'Hello {0}'.format(name)
 
-greet()
-greet("a", 3, key="1")
+# greet()
+# greet("a", 3, key="1")
 
 @function_wrapper
 def hreet(*args, **kwargs):
     time.sleep(1)
     return None
 
-hreet()
-hreet(1)
-hreet(key=1, a=2)
-hreet("aaa", key=1, a=2)
+# hreet()
+# hreet(1)
+# hreet(key=1, a=2)
+# hreet("aaa", key=1, a=2)
 
 @function_wrapper
 def temp():
     print("HAHA")
 
-temp()
+#temp()
 def foo(bar="foo", foo=10, *args, **kwargs):
     pass
 
-print(func2str(foo))
-print(func2str(foo, 1))
-print(func2str(foo, "1"))
-print(func2str(foo, 2))
-print(func2str(foo, 1, 2, 'b', test="a"))
-if __name__ == "__main__":
-    unittest.main()
+# print(func2str(foo))
+# print(func2str(foo, 1))
+# print(func2str(foo, "1"))
+# print(func2str(foo, 2))
+# print(func2str(foo, 1, 2, 'b', test="a"))
+#if __name__ == "__main__":
+    #unittest.main()
 
+def function_wrapper2(func, logger: logging.Logger=None):
+    if logger is None:  log = print
+    else:   log = logger.info
+    def wrapper(*args, **kwargs):
+        args_str = tuple_element_to_str(args, exception=False)
+        kwargs_str = dict2str(kwargs, exception=False)
+        function_str = f"{func.__name__}({args_str}{kwargs_str})"
+        log(function_str)
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        #log('{0} return {1}<{2}>'.format(function_str, type(result), result))
+        return result
+    return wrapper
+
+@function_wrapper2
+def foo(bar, *args, **kwargs):
+    print(args)
+    print(kwargs)
+    print("DAQU")
+    pass
+
+foo(bar=1)
