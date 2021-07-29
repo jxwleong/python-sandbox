@@ -14,3 +14,4 @@ class Test_hex2decimal(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

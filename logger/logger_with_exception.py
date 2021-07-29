@@ -5,6 +5,7 @@ logger = logging.getLogger(__name__)
 
 
 def foo():
+    logger.error("raise Exception!")
     raise Exception("FOO!")
 try:
     #raise Exception("FAK!")
