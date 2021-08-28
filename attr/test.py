@@ -5,7 +5,9 @@ class Fool:
 
 foo = Fool("Haha", "0.1")
 
-print("".join(["BEFORE:", str(foo.name)]))
-print("".join(["BEFORE with getattr:", str(getattr(foo, "name"))]))
-setattr(foo, "name", "Changed")
-print("".join(["AFTER with setattr:",str(getattr(foo, "name"))]))
+
+if __name__ == '__main__':
+    print("".join(["BEFORE:", str(foo.name)]))
+    print("".join(["BEFORE with getattr:", str(getattr(foo, "name"))]))
+    setattr(foo, "name", "Changed")
+    print("".join(["AFTER with setattr:",str(getattr(foo, "name"))]))
