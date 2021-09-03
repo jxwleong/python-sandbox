@@ -1,3 +1,6 @@
+"""
+Example python script to demonstrate the use case of args
+"""
 def print_args(*args):
     if args:
         print(args)
