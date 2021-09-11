@@ -8,6 +8,7 @@ COLOR = {
     "RED": "\033[91m",
     "ENDC": "\033[0m",
 }
+
 logger = logging.getLogger()
 logger.info(COLOR["GREEN"], "This is info ")
 

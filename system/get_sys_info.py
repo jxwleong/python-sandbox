@@ -9,7 +9,7 @@ import subprocess
 import pprint
 import re
 
-OUTPUT_FILE = 'sysinfo.json'
+OUTPUT_FILE = '../sysinfo.json'
 
 info = dict()
 pp = pprint.PrettyPrinter(indent=4)

@@ -37,7 +37,7 @@ class Test_dict2str(unittest.TestCase):
         self.assertEqual("logger=False", dict2str({"logger": False}))
 
     def test_dict2str_multiple_elements(self):
-        self.assertEqual("test=1, key='haha', a='THe hell???'", dict2str({'test': 1, 'key': 'haha', 'a': 'THe hell???'}))
+        self.assertEqual("unittest=1, key='haha', a='THe hell???'", dict2str({'unittest': 1, 'key': 'haha', 'a': 'THe hell???'}))
 
     def test_dict2str_given_empty_dict(self):
         self.assertRaises(ValueError, dict2str, {})
@@ -88,10 +88,10 @@ def arguments_in_str():
     """
     Returns the arguments of caller in string
     Ex.
-        def foo(logger, test=1, *args, **kwargs):
+        def foo(logger, unittest=1, *args, **kwargs):
             print(arguments_in_str())
         Call: foo("", 2, 2, 3)
-        Return: (logger='', test=2, 2, 3)
+        Return: (logger='', unittest=2, 2, 3)
 
     Reference: https://kbyanc.blogspot.com/2007/07/python-aggregating-function-arguments.html
     """
@@ -192,7 +192,7 @@ def foo(bar="foo", foo=10, *args, **kwargs):
 # print(func2str(foo, 1))
 # print(func2str(foo, "1"))
 # print(func2str(foo, 2))
-# print(func2str(foo, 1, 2, 'b', test="a"))
+# print(func2str(foo, 1, 2, 'b', unittest="a"))
 #if __name__ == "__main__":
     #unittest.main()
 

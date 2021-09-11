@@ -58,8 +58,7 @@ class ElectricKettle:
          else:
             print ("No power.")
 
-def main():
-   # Plug in
+def main():   # Plug in
    socket = Socket()
    adapter = Adapter(socket)
    kettle = ElectricKettle(adapter)
