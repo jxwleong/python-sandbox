@@ -13,10 +13,10 @@ class Engineer(Person):
     """
     def __init__(self, qualification, *args, **kwargs):
         self.qualification = qualification
-        super(Engineer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 engineer = Engineer("Master", "X", 20)
-print(engineer.qualification)
-print(engineer.name)
-print(engineer.age)
+print(f"Qualification: {engineer.qualification}")
+print(f"Name: {engineer.name}")
+print(f"Age: {engineer.age}")
