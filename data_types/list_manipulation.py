@@ -180,5 +180,31 @@ class Test_duplicate_list(unittest.TestCase):
         self.assertEqual([[1, 2], [1, 2], [1, 2]], duplicate_list([1, 2], 2))
         self.assertEqual([[1, 2], [1, 2], [1, 2], [1, 2]], duplicate_list([1, 2], 3))
 
+
+def number_to_list_of_integer(num):
+    # Ref: https://www.geeksforgeeks.org/python-convert-number-to-list-of-integers/
+    return [int(x) for x in str(num)]
+
+
+class Test_number_to_list_of_integer(unittest.TestCase):
+    def test_number_to_list_of_integer(self):
+        self.assertEqual([1, 2, 3], number_to_list_of_integer(123))
+
+
+def number_to_list_of_ascending_integer(num, start_number=0):
+    list_ = []
+    for x in range(start_number, num + start_number):
+        list_.append(x)
+    return list_
+
+class Test_number_to_list_of_ascending_integer(unittest.TestCase):
+    def test_number_to_list_of_ascending_integer_start_number_0(self):
+        # default start_number=0
+        self.assertEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], number_to_list_of_ascending_integer(10))
+        self.assertEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], number_to_list_of_ascending_integer(10, start_number=0))
+
+    def test_number_to_list_of_ascending_integer_start_number_1(self):
+        self.assertEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], number_to_list_of_ascending_integer(10, start_number=1))
+
 if __name__ == '__main__':
     unittest.main()
