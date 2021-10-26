@@ -37,8 +37,8 @@ def swap32(x):
             ((x >> 24) & 0x000000FF))
 
 
-def hex_str_to_ascii(hex_str, reverse=True):
-    if reverse is True:
+def hex_str_to_ascii(hex_str, swap=True):
+    if swap is True:
         hex_str = hex(swap32(int(hex_str, base=16)))
     hex_ = hex_str[2:]  # Remove "0x"
     hex_byte = bytes.fromhex(hex_)
