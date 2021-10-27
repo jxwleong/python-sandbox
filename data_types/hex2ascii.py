@@ -1,5 +1,5 @@
 # Processor hex value get from http://www.jaist.ac.jp/iscenter-new/mpc/altix/altixdata/opt/intel/vtune/doc/users_guide/mergedProjects/analyzer_ec/mergedProjects/reference_olh/mergedProjects/instructions/instruct32_hh/vc46.htm
-
+import unittest
 
 cpuid_processor_string = {
     "0x80000002": {"eax": "0x20202020", 
@@ -30,16 +30,21 @@ lsb             msb
 | 78 | 56 | 34 | 12|
 +------------------+
 """
-def swap32(x):
+def swap_endian32(x):
     return (((x << 24) & 0xFF000000) |
             ((x <<  8) & 0x00FF0000) |
             ((x >>  8) & 0x0000FF00) |
             ((x >> 24) & 0x000000FF))
 
+class Test_swap_endian32(unittest.TestCase):
+    def test_swap_endian32(self):
+        self.assertEqual(0xefbeadde, swap_endian32(0xdeadbeef))
+
+
 
 def hex_str_to_ascii(hex_str, swap=True):
     if swap is True:
-        hex_str = hex(swap32(int(hex_str, base=16)))
+        hex_str = hex(swap_endian32(int(hex_str, base=16)))
     hex_ = hex_str[2:]  # Remove "0x"
     hex_byte = bytes.fromhex(hex_)
     ascii_byte = hex_byte.decode("ASCII")
@@ -54,3 +59,7 @@ def get_processor_string():
     return str_
 
 print(get_processor_string())
+
+
+if __name__ == '__main__':
+    unittest.main()
