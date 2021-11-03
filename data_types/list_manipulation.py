@@ -223,14 +223,19 @@ def get_operation_and_value_in_str(supported_operation: list, str_: str) -> list
             list_.append(operation.replace(" ", ""))
             list_.append(value.replace(" ", ""))
         except IndexError:
-           pass
+            if str_.isdigit() is True:  # If str is digit only, default to "="
+                list_.append("=")
+                list_.append(str_.replace(" ", ""))
+                break
+            else:
+                pass
     return list_
 
 class Test_get_operation_and_value_in_str(unittest.TestCase):
     def test_get_operation_and_value_in_str(self):
         self.assertEqual([">", "1"], get_operation_and_value_in_str([">"], ">1"))
         self.assertEqual([">", "1"], get_operation_and_value_in_str(["<",">"], "> 1"))
-
+        self.assertEqual(["=", "1"], get_operation_and_value_in_str(["<",">"], "1"))
 
 if __name__ == '__main__':
     unittest.main()
