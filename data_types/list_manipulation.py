@@ -206,5 +206,31 @@ class Test_number_to_list_of_ascending_integer(unittest.TestCase):
     def test_number_to_list_of_ascending_integer_start_number_1(self):
         self.assertEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], number_to_list_of_ascending_integer(10, start_number=1))
 
+
+
+def get_operation_and_value_in_str(supported_operation: list, str_: str) -> list:
+    """
+    Get the operation and value in str into the element of list
+    
+    get_operation_and_value_in_str(["<",">"], ">1")
+    Return: [">", "1"]
+
+    """
+    list_ = []
+    for operation in supported_operation:
+        try: 
+            value = str_.split(operation)[1]
+            list_.append(operation.replace(" ", ""))
+            list_.append(value.replace(" ", ""))
+        except IndexError:
+           pass
+    return list_
+
+class Test_get_operation_and_value_in_str(unittest.TestCase):
+    def test_get_operation_and_value_in_str(self):
+        self.assertEqual([">", "1"], get_operation_and_value_in_str([">"], ">1"))
+        self.assertEqual([">", "1"], get_operation_and_value_in_str(["<",">"], "> 1"))
+
+
 if __name__ == '__main__':
     unittest.main()
