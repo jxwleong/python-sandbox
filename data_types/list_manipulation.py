@@ -237,5 +237,6 @@ class Test_get_operation_and_value_in_str(unittest.TestCase):
         self.assertEqual([">", "1"], get_operation_and_value_in_str(["<",">"], "> 1"))
         self.assertEqual(["=", "1"], get_operation_and_value_in_str(["<",">"], "1"))
 
+
 if __name__ == '__main__':
     unittest.main()
