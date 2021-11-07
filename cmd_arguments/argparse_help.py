@@ -17,6 +17,7 @@ parser.add_argument('-t', '--time', type=int,
 parser.add_argument('-v', '--verbose', action='store_true', 
         help=textwrap.dedent("""\
             Display more info on console
+            
             Is this what u want? hehe
             """))
 parser.add_argument('-d', '--data')
