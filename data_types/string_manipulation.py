@@ -40,6 +40,14 @@ def delimited_str_to_list(str, delimiter=",", remove_space=True):
     return list_
 
 
+def str_char_to_list(str):
+    # Convert each characters in the string to become individual element in the list
+    list_ = []
+
+    for char in str:
+        list_.append(char)
+    return list_
+
 class Test_delimited_str_to_list(unittest.TestCase):
     def test_delimited_str_to_list_given_delimter(self):
         self.assertEqual(["a", "b"], delimited_str_to_list("a   ,b,"))
@@ -50,6 +58,12 @@ class Test_delimited_str_to_list(unittest.TestCase):
         self.assertEqual(["a"], delimited_str_to_list("a "))
         self.assertEqual(["a"], delimited_str_to_list("a,"))
         self.assertEqual(["a"], delimited_str_to_list("  a,  "))
+
+
+class Test_str_char_to_list(unittest.TestCase):
+    def test_str_char_to_list_oass(self):
+        self.assertEqual(["a", "b", "z"], str_char_to_list("abz"))
+
 
 if __name__ == '__main__':
     unittest.main()
