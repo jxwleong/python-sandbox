@@ -37,3 +37,12 @@ def dictionary_check(input):
             print (key)
         else:
             print (key, value)
+            
+            
+ def get(dict_, keys):
+    # To access diciontary with keys
+    # Src: https://stackoverflow.com/a/39820877
+    ret = dict_
+    for key in keys:
+        ret = ret[key]
+    return ret
